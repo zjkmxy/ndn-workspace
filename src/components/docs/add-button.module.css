@@ -1,0 +1,22 @@
+.wrapper {
+  display: grid;
+  place-items: center;
+  height: 60px;
+  width: 60px;
+  border-radius: 50%;
+  background-color: #4480f7;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
+
+.wrapper:hover {
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px,
+    rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;
+}
+
+.sign {
+  font-size: 28px;
+  color: white;
+}

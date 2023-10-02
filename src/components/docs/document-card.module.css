@@ -1,0 +1,35 @@
+.wrapper {
+  background-color: white;
+  padding: 10px;
+  border: 1px solid rgb(223, 223, 223);
+  border-radius: 5px;
+}
+
+.wrapper:hover {
+  border: 1px solid #4480f7;
+  cursor: pointer;
+}
+
+.preview {
+  height: 200px;
+  overflow: hidden;
+  font-size: 50%;
+  word-wrap: break-word;
+}
+
+.footer {
+  display: grid;
+  grid-template-columns: auto 20px;
+  min-height: 40px;
+  border-top: 1px solid rgb(223, 223, 223);
+  padding-top: 10px;
+}
+
+.title {
+  color: #494949;
+  font-weight: bold;
+}
+
+.delete {
+  font-size: 12px;
+}
