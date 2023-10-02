@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import moment from 'moment';
 import AddEventModal from './add-event-modal';
-import { generateWeekViewCoordinates, CalEvent, CalEventUpdate } from '../../utils/utils';
+import { generateWeekViewCoordinates } from '../../utils/utils';
+import { CalEvent } from '../../utils/models';
 import styles from './styles.module.css';
 import { RangeValue } from 'rc-picker/lib/interface';
 
@@ -9,11 +10,11 @@ export default function EventHighlighter(props: {
   event: CalEvent,
   startDate: moment.Moment,
   onEventDelete: (id: string) => void,
-  onEventUpdate: (id: string, updatedEvent: CalEventUpdate) => void,
+  onEventUpdate: (id: string, updatedEvent: CalEvent.Update) => void,
 }) {
   const [showEditEventModal, setShowEditEventModal] = useState(false)
-  const [eventNewStart, setEventNewStart] = useState<moment.Moment | null>(null)
-  const [eventNewEnd, setEventNewEnd] = useState<moment.Moment | null>(null)
+  const [eventNewStart, setEventNewStart] = useState<number | undefined>(undefined)
+  const [eventNewEnd, setEventNewEnd] = useState<number | undefined>(undefined)
 
   /**
    * Deletes the event from the event list
@@ -30,8 +31,8 @@ export default function EventHighlighter(props: {
   const updateEvent = (title: string) => {
     props.onEventUpdate(props.event.id, {
       title: title,
-      start: eventNewStart,
-      end: eventNewEnd,
+      start: eventNewStart?.valueOf(),
+      end: eventNewEnd?.valueOf(),
     })
     setShowEditEventModal(false)
   }
@@ -40,7 +41,7 @@ export default function EventHighlighter(props: {
    * Open the edit event modal and initializes the start and end time
    */
   const openEditEventModal = () => {
-    console.log(props.event.title);
+    // console.debug(props.event.title);
     setShowEditEventModal(true)
     setEventNewStart(props.event.start)
     setEventNewEnd(props.event.end)
@@ -51,11 +52,11 @@ export default function EventHighlighter(props: {
    * @param {arr: moment, moment} - Array containing start and end date of the event
    */
   const onCurrentEventTimeChange = (dates: RangeValue<moment.Moment>) => {
-    // console.log('called');
+    // console.debug('called');
     if (dates) {
       const [st, ed] = dates
-      setEventNewStart(st)
-      setEventNewEnd(ed)
+      setEventNewStart(st?.valueOf())
+      setEventNewEnd(ed?.valueOf())
     }
   };
 
@@ -75,8 +76,8 @@ export default function EventHighlighter(props: {
         onCancel={deleteEvent}
         onClose={closeModal}
         onSubmit={updateEvent}
-        eventStart={eventNewStart}
-        eventEnd={eventNewEnd}
+        eventStart={eventNewStart ? moment(eventNewStart) : null}
+        eventEnd={eventNewEnd ? moment(eventNewEnd) : null}
         onTimeChange={onCurrentEventTimeChange}
       />
       <div

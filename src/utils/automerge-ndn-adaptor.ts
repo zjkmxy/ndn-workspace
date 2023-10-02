@@ -1,5 +1,5 @@
 import { Message, NetworkAdapter, PeerId, cbor, isValidMessage } from "@automerge/automerge-repo"
-import { Endpoint, type Producer } from "@ndn/endpoint";
+import { Endpoint } from "@ndn/endpoint";
 import { SvSync, type SyncNode, type SyncUpdate } from "@ndn/sync"
 import { Name, Data, digestSigning, type Interest, type Verifier } from "@ndn/packet";
 import { SequenceNum } from "@ndn/naming-convention2";
@@ -25,7 +25,7 @@ export class NdnAdapter extends NetworkAdapter {
 
     // Data handler
     endpoint.produce(this.baseName,
-      async (interest: Interest, _producer: Producer) => {
+      async (interest: Interest) => {
         const name = interest.name.toString();
         return this.pktStorage[name];
       },

@@ -1,14 +1,30 @@
 // Adapted from https://github.com/rajatvijay/react-google-calendar-clone
-import {useEffect, useState} from 'react';
-import WeekView from '../components/calendar/week-view';
-import CalendarEventHandler from '../components/calendar/calendar-event-handler';
-import { CalEvent, CalEventUpdate } from '../utils/utils';
+import { useCallback, useEffect, useState } from 'react'
+import WeekView from '../components/calendar/week-view'
+import * as CalendarEventHandler from '../components/calendar/calendar-event-handler'
+import { CalEvent, Calendar } from '../utils/models'
+import { rootDoc, setDocChangeHook, unsetDocChangeHook } from "../utils/main"
 
-export default function SharedCalendar () {
-  const [events, setEvents] = useState<{ [time: number]: CalEvent[] }>({})
+export default function SharedCalendar() {
+  const [events, setEvents] = useState<Calendar>({})
+
+  const loadDocument = useCallback(() => {
+    rootDoc.doc()
+      .then(docs => {
+        setEvents(docs?.calendar || {})
+      })
+      .catch((err) => console.log(err))
+  }, [])
 
   useEffect(() => {
-    // Load and save events
+    loadDocument()
+  }, [loadDocument])
+
+  useEffect(() => {
+    setDocChangeHook(docs => {
+      setEvents(docs.calendar)
+    })
+    return () => unsetDocChangeHook()
   }, [])
 
   /**
@@ -21,14 +37,17 @@ export default function SharedCalendar () {
    * }
   */
   const addNewEvent = (event: { title: string, start: moment.Moment, end: moment.Moment }) => {
-    const newEvent = new CalEvent(
-      CalendarEventHandler.generateId (event),
-      event.title,
-      event.start,
-      event.end
-    )
-    setEvents(CalendarEventHandler.add (events, newEvent))
-  };
+    const [start, end] = [event.start.valueOf(), event.end.valueOf()]
+    const newEvent: CalEvent = {
+      id: CalendarEventHandler.generateId({ title: event.title, start: start, end: end }),
+      title: event.title,
+      start: start,
+      end: end,
+    }
+    rootDoc.change(docs => {
+      CalendarEventHandler.addEvent(docs.calendar, newEvent)
+    })
+  }
 
   /**
    * Updates an already existing event in the state event list
@@ -40,21 +59,25 @@ export default function SharedCalendar () {
    *  end: {timeStamp} - Time stamp for the end of the event,
    * }
   */
-  const updateEvent = (eventId:string, updatedEvent: CalEventUpdate) => {
-    setEvents(CalendarEventHandler.update(
-      eventId,
-      updatedEvent,
-      events
-    ))
-  };
+  const updateEvent = (eventId: string, updatedEvent: CalEvent.Update) => {
+    rootDoc.change(docs => {
+      CalendarEventHandler.updateEvent(
+        eventId,
+        updatedEvent,
+        docs.calendar
+      )
+    })
+  }
 
   /**
    * Deletes an event from the event list in the state
    * @param {String} eventId - Id of the event
   */
-  const deleteEvent = (eventId:string) => {
-    setEvents(CalendarEventHandler.delete (eventId, events))
-  };
+  const deleteEvent = (eventId: string) => {
+    rootDoc.change(docs => {
+      CalendarEventHandler.deleteEvent(eventId, docs.calendar)
+    })
+  }
 
   return (
     <WeekView
@@ -63,5 +86,5 @@ export default function SharedCalendar () {
       onEventUpdate={updateEvent}
       onEventDelete={deleteEvent}
     />
-  );
+  )
 }

@@ -5,15 +5,16 @@ import WeekToolbar from './week-toolbar';
 import WeekHeader from './week-header';
 import TimeSlotGroup from './time-slot-group';
 import EventHighlighter from './event-highlighter';
-import { times, getAllDaysInTheWeek, CalEvent, CalEventUpdate } from '../../utils/utils';
+import { times, getAllDaysInTheWeek } from '../../utils/utils';
+import { CalEvent, Calendar } from '../../utils/models';
 import styles from './styles.module.css'
 import { RangeValue } from 'rc-picker/lib/interface';
 
 export default function WeekView(props: {
-  events: { [time: number]: CalEvent[] },
+  events: Calendar,
   onNewEvent: (event: { title: string, start: moment.Moment, end: moment.Moment }) => void,
   onEventDelete: (id: string) => void,
-  onEventUpdate: (id: string, updatedEvent: CalEventUpdate) => void,
+  onEventUpdate: (id: string, updatedEvent: CalEvent.Update) => void,
 }) {
   const [startDate, setStartDate] = useState(moment())
   const [weekDays, setWeekDays] = useState(getAllDaysInTheWeek())
@@ -119,8 +120,8 @@ export default function WeekView(props: {
           {props.events[time] &&
             props.events[time].map(
               event =>
-                event.startWeek <= moment(startDate).week() &&
-                event.endWeek >= moment(startDate).week() &&
+                CalEvent.startWeek(event) <= moment(startDate).week() &&
+                CalEvent.endWeek(event) >= moment(startDate).week() &&
                 <EventHighlighter
                   onEventDelete={props.onEventDelete}
                   onEventUpdate={props.onEventUpdate}

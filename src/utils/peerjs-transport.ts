@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-namespace */
 import { Peer, DataConnection, BufferedConnection, PeerError, PeerOptions } from "peerjs"
 import EventIterator from "event-iterator";
 import { L3Face, rxFromPacketIterable, Transport } from "@ndn/l3face";
@@ -159,6 +158,10 @@ export class PeerJsListener {
     return this._faces;
   }
 
+  public get peerId(): string {
+    return this.peer.id;
+  }
+
   public closeAll() {
     this.peer.disconnect();
     for (const connId in this._faces) {
@@ -172,6 +175,12 @@ export class PeerJsListener {
     return PeerJsListener.listen(this.opts);
   }
 
+  public async connectTo(peerId: string) {
+    console.debug(`[PeerjsListener] Trying to connect to ${peerId}`);
+    const face = await PeerJsTransport.createFace({}, this.peer, peerId, {});
+    this._faces.push(face);
+  }
+
   public async connectToKnownPeers() {
     const response = await fetch(`http://${this.opts.host}:${this.opts.port}${this.opts.path}/${this.opts.key}/peers`);
     const peers = await response.json() as string[];
@@ -179,9 +188,7 @@ export class PeerJsListener {
       if (peerId == this.peer.id) {
         continue;
       }
-      console.debug(`Trying to connect ${peerId}`);
-      const face = await PeerJsTransport.createFace({}, this.peer, peerId, {});
-      this._faces.push(face);
+      await this.connectTo(peerId);
     }
   }
 }
@@ -189,19 +196,19 @@ export class PeerJsListener {
 export namespace PeerJsListener {
   export interface Options {
     /** Server host. */
-    host: string
+    host: string;
 
     /** Server port number. */
-    port: number
+    port: number;
 
     /** Connection key for server API calls. Defaults to `peerjs`. */
-    key?: string
+    key?: string;
 
     /** The path where your self-hosted PeerServer is running. Defaults to `'/'`. */
-    path?: string
+    path?: string;
 
     /** Optional ID of this peer provided by the user. */
-    peerId?: string
+    peerId?: string;
 
     /** Connect timeout (in milliseconds). */
     connectTimeout?: number;

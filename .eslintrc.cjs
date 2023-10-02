@@ -14,8 +14,10 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
+    // The following two are for debug use. Should fix before release.
     "@typescript-eslint/no-unused-vars": "warn",
-    '@typescript-eslint/no-namespace': 'warn',
-    'prefer-const': 'warn'
+    'prefer-const': 'warn',
+    // NDNts style class & namespace combination requires turning off the following
+    '@typescript-eslint/no-namespace': 'off',
   },
 }

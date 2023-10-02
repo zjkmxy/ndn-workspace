@@ -1,5 +1,6 @@
 import QrScanner from "qr-scanner";
 import moment from 'moment';
+import { CalEvent } from "./models";
 
 export function base64ToBytes(base64: string) {
   const binString = atob(base64);
@@ -23,39 +24,6 @@ export async function scanQrCode(file: File) {
 }
 
 // Caldendar
-export class CalEvent {
-  constructor(
-    public id: string,
-    public title: string,
-    public start: moment.Moment,
-    public end: moment.Moment,
-  ) { }
-
-  get startWeek() {
-    return moment(this.start).week()
-  }
-
-  get endWeek() {
-    return moment(this.end).week()
-  }
-
-  update({ title, start, end }: CalEventUpdate) {
-    return new CalEvent(
-      this.id,
-      title || this.title,
-      start || this.start,
-      end || this.end,
-    )
-  }
-}
-
-export type CalEventUpdate = {
-  title: string | null,
-  start: moment.Moment | null,
-  end: moment.Moment | null,
-}
-
-export type AllEvents = { [time: string]: Array<CalEvent> };
 
 /**
    * Generate all days in a week
