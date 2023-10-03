@@ -1,43 +1,41 @@
-import React from 'react';
-import {Input, DatePicker} from 'antd';
-import moment from 'moment';
-import styles from './styles.module.css'
-import momentGenerateConfig from 'rc-picker/lib/generate/moment';
-import {RangeValue} from 'rc-picker/lib/interface';
+import React from 'react'
+import moment from 'moment'
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
+import { TextField } from '@mui/material'
+import Grid from '@mui/material/Unstable_Grid2'
 
-
-const {RangePicker} = DatePicker.generatePicker<moment.Moment>(momentGenerateConfig);
-
-export default function AddEvent (props: {
+export default function AddEvent(props: {
   title: string,
   start: moment.Moment | null,
   end: moment.Moment | null,
   onTitleChange: React.ChangeEventHandler<HTMLInputElement>,
-  onTimeChange: (value: RangeValue<moment.Moment>) => void,
+  onTimeChange: (value: [moment.Moment | null, moment.Moment | null]) => void,
 }) {
   return (
-    <>
-      <Input
-        type="text"
-        placeholder="Add Title"
-        value={props.title}
-        className={styles['input-styles']}
-        size="large"
-        autoFocus={true}
-        onChange={props.onTitleChange}
-      />
-      <RangePicker
-        style={{width: '100%'}}
-        value={[moment (props.start), moment (props.end)]}
-        onChange={props.onTimeChange}
-        showTime={{
-          format: 'HH:mm',
-          hourStep: 1,
-          minuteStep: 30,
-          defaultValue: [moment (props.start), moment (props.end)],
-        }}
-        format="MMM Do, YYYY hh:mm a"
-      />
-    </>
-  );
+    <Grid container spacing={2}>
+      <Grid xs={12}>
+        <TextField
+          fullWidth
+          label='Title'
+          margin='normal'
+          value={props.title}
+          onChange={props.onTitleChange}
+        />
+      </Grid>
+      <Grid xs={6}>
+        <DateTimePicker
+          label='Start time'
+          value={moment(props.start)}
+          onChange={newVal => props.onTimeChange([newVal, null])}
+          slotProps={{ textField: { fullWidth: true } }} />
+      </Grid>
+      <Grid xs={6}>
+        <DateTimePicker
+          label='End time'
+          value={moment(props.end)}
+          onChange={newVal => props.onTimeChange([null, newVal])}
+          slotProps={{ textField: { fullWidth: true } }} />
+      </Grid>
+    </Grid>
+  )
 }

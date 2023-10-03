@@ -25,6 +25,9 @@ export let certStorage: CertStorage
 export let listener: PeerJsListener
 export let endpoint: Endpoint
 export let automergeRepo: Repo
+// TODO: Decouple backend with frontend. Consider Redux?
+// TODO: Switch to Yjs
+// TODO: Separate CRDT document with data packets. Add data storage to store updates from other peers.
 export let rootDocId: AutomergeUrl | null = null
 export let rootDoc: DocHandle<RootDocType>
 export let docChangeHook: ((docs: RootDocType) => void) | null = null

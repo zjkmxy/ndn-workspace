@@ -1,8 +1,9 @@
 import { PropsWithChildren } from 'react';
-import { Row, Col } from 'antd';
 import TimeSlot from './time-slot';
 import styles from './styles.module.css';
 import moment from 'moment';
+import Grid from '@mui/material/Unstable_Grid2'
+import { Typography } from '@mui/material';
 
 function TimeSlotGroup(props: PropsWithChildren<{
   time: number,
@@ -15,12 +16,12 @@ function TimeSlotGroup(props: PropsWithChildren<{
 }>) {
   const formattedTime = moment().set('hours', props.time).format('h a');
   return (
-    <Row key={props.time} className={styles.row}>
-      <Col className={styles['time-col']} span={3}>
-        <span className={styles['time-string']}>
+    <Grid container key={props.time} className={styles.row} columns={24}>
+      <Grid className={styles['time-col']} xs={3}>
+        <Typography>
           {formattedTime}
-        </span>
-      </Col>
+        </Typography>
+      </Grid>
       {props.weekDays.map(day => (
         <TimeSlot
           key={day.dateStamp}
@@ -30,7 +31,7 @@ function TimeSlotGroup(props: PropsWithChildren<{
         />
       ))}
       {props.children}
-    </Row>
+    </Grid>
   );
 }
 

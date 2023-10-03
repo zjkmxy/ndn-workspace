@@ -1,14 +1,13 @@
-import { useEffect, useState } from 'react';
-import moment from 'moment';
-import AddEventModal from './add-event-modal';
-import WeekToolbar from './week-toolbar';
-import WeekHeader from './week-header';
-import TimeSlotGroup from './time-slot-group';
-import EventHighlighter from './event-highlighter';
-import { times, getAllDaysInTheWeek } from '../../utils/utils';
-import { CalEvent, Calendar } from '../../utils/models';
+import { useEffect, useState } from 'react'
+import moment from 'moment'
+import AddEventModal from './add-event-modal'
+import WeekToolbar from './week-toolbar'
+import WeekHeader from './week-header'
+import TimeSlotGroup from './time-slot-group'
+import EventHighlighter from './event-highlighter'
+import { times, getAllDaysInTheWeek } from '../../utils/utils'
+import { CalEvent, Calendar } from '../../utils/models'
 import styles from './styles.module.css'
-import { RangeValue } from 'rc-picker/lib/interface';
 
 export default function WeekView(props: {
   events: Calendar,
@@ -47,8 +46,8 @@ export default function WeekView(props: {
    * @param {number} time - Time of the cell the user clicked
   */
   const openAddEventModal = (dateStamp: number, time: number) => {
-    const start = moment(dateStamp).set('hour', time);
-    const end = start.clone().add(1, 'hour');
+    const start = moment(dateStamp).set('hour', time)
+    const end = start.clone().add(1, 'hour')
     setEventStart(start)
     setEventEnd(end)
     setShowAddEventModal(true)
@@ -69,7 +68,7 @@ export default function WeekView(props: {
         title,
         start: eventStart,
         end: eventEnd,
-      });
+      })
       setShowAddEventModal(false)
     }
   }
@@ -78,13 +77,18 @@ export default function WeekView(props: {
    * Saves the timeStamps of the new event in the state
    * @param {arr: moment, moment} - Array containing start and end date of the new event
   */
-  const onCurrentEventTimeChange = (dates: RangeValue<moment.Moment>) => {
-    if (dates) {
-      setEventStart(dates[0])
-      setEventEnd(dates[1])
+  const onCurrentEventTimeChange = (dates: [moment.Moment | null, moment.Moment | null]) => {
+    const [st, ed] = dates
+    if (st) {
+      setEventStart(st)
+    }
+    if (ed) {
+      setEventEnd(ed)
     }
   }
 
+  // TODO: Handle 12:00 AM correctly
+  // TODO: Handle multi-day event correctly
   return (
     <div className={styles.container}>
 

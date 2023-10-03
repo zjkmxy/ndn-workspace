@@ -33,14 +33,9 @@ export function generateId(event: { title: string, start: number, end: number })
 */
 export function deleteEvent(eventId: string, allEvents: Calendar) {
   Object.keys(allEvents).forEach(time => {
-    let i = 0
-    for (i = 0; i < allEvents[time].length; i++) {
-      if (allEvents[time][i].id === eventId) {
-        break
-      }
-    }
-    if (i < allEvents[time].length) {
-      allEvents[time].splice(i, 1)
+    const index = allEvents[time].findIndex(event => event.id === eventId)
+    if (index >= 0) {
+      allEvents[time].splice(index, 1)
     }
   })
 }

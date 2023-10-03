@@ -1,15 +1,14 @@
-import {Modal, Button} from 'antd';
-import React, {useState} from 'react';
-import AddEvent from './add-event';
-import {RangeValue} from 'rc-picker/lib/interface';
+import { Dialog, Button, DialogTitle, DialogContent, DialogActions } from '@mui/material'
+import React, { useState } from 'react'
+import AddEvent from './add-event'
 
-export default function AddEventModal (props : {
+export default function AddEventModal(props: {
   visible: boolean,
   editMode: boolean,
   eventTitle: string,
   eventStart: moment.Moment | null,
   eventEnd: moment.Moment | null,
-  onTimeChange: (value: RangeValue<moment.Moment>) => void,
+  onTimeChange: (value: [moment.Moment | null, moment.Moment | null]) => void,
   onSubmit: (title: string) => void,
   onClose: React.MouseEventHandler<HTMLElement>,
   onCancel: React.MouseEventHandler<HTMLElement>,
@@ -18,26 +17,29 @@ export default function AddEventModal (props : {
   const [title, setTitle] = useState(props.eventTitle)
 
   return (
-    <Modal
+    <Dialog
       open={props.visible}
-      onOk={() => props.onSubmit(title)}
-      onCancel={props.onClose}
-      footer={[
-        <Button key="back" onClick={props.onCancel}>
-          {props.editMode ? 'Delete' : 'Cancel'}
-        </Button>,
-        <Button key="submit" type="primary" onClick={() => props.onSubmit(title)}>
-          {props.editMode ? 'Update Event' : 'Add Event'}
-        </Button>,
-      ]}
     >
-      <AddEvent
-        title={title}
-        onTitleChange={e => setTitle(e.target.value)}
-        start={props.eventStart}
-        end={props.eventEnd}
-        onTimeChange={props.onTimeChange}
-      />
-    </Modal>
-  );
+      <DialogTitle>
+        {props.editMode ? 'Update Event' : 'Add Event'}
+      </DialogTitle>
+      <DialogContent>
+        <AddEvent
+          title={title}
+          onTitleChange={e => setTitle(e.target.value)}
+          start={props.eventStart}
+          end={props.eventEnd}
+          onTimeChange={props.onTimeChange}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button key="back" type="reset" onClick={props.onCancel}>
+          {props.editMode ? 'Delete' : 'Cancel'}
+        </Button>
+        <Button key="submit" type="submit" onClick={() => props.onSubmit(title)} autoFocus>
+          {props.editMode ? 'Update' : 'Add'}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  )
 }

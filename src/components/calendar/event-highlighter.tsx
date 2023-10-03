@@ -1,10 +1,9 @@
-import { useState } from 'react';
-import moment from 'moment';
-import AddEventModal from './add-event-modal';
-import { generateWeekViewCoordinates } from '../../utils/utils';
-import { CalEvent } from '../../utils/models';
-import styles from './styles.module.css';
-import { RangeValue } from 'rc-picker/lib/interface';
+import { useState } from 'react'
+import moment from 'moment'
+import AddEventModal from './add-event-modal'
+import { generateWeekViewCoordinates } from '../../utils/utils'
+import { CalEvent } from '../../utils/models'
+import styles from './styles.module.css'
 
 export default function EventHighlighter(props: {
   event: CalEvent,
@@ -41,31 +40,32 @@ export default function EventHighlighter(props: {
    * Open the edit event modal and initializes the start and end time
    */
   const openEditEventModal = () => {
-    // console.debug(props.event.title);
-    setShowEditEventModal(true)
+    // console.debug(props.event.title)
     setEventNewStart(props.event.start)
     setEventNewEnd(props.event.end)
-  };
+    setShowEditEventModal(true)
+  }
 
   /**
    * Set the updated start and end times the state of the event being edited
    * @param {arr: moment, moment} - Array containing start and end date of the event
    */
-  const onCurrentEventTimeChange = (dates: RangeValue<moment.Moment>) => {
-    // console.debug('called');
-    if (dates) {
-      const [st, ed] = dates
+  const onCurrentEventTimeChange = (dates: [moment.Moment | null, moment.Moment | null]) => {
+    const [st, ed] = dates
+    if (st) {
       setEventNewStart(st?.valueOf())
+    }
+    if (ed) {
       setEventNewEnd(ed?.valueOf())
     }
-  };
+  }
 
   /**
    * Closes modal and does nothing more!
    */
   const closeModal = () => {
     setShowEditEventModal(false)
-  };
+  }
 
   return (
     <>

@@ -175,7 +175,7 @@ export class PeerJsListener {
     return PeerJsListener.listen(this.opts);
   }
 
-  public async connectTo(peerId: string) {
+  public async connect(peerId: string) {
     console.debug(`[PeerjsListener] Trying to connect to ${peerId}`);
     const face = await PeerJsTransport.createFace({}, this.peer, peerId, {});
     this._faces.push(face);
@@ -188,7 +188,7 @@ export class PeerJsListener {
       if (peerId == this.peer.id) {
         continue;
       }
-      await this.connectTo(peerId);
+      await this.connect(peerId);
     }
   }
 }

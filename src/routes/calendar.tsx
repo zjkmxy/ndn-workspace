@@ -3,7 +3,10 @@ import { useCallback, useEffect, useState } from 'react'
 import WeekView from '../components/calendar/week-view'
 import * as CalendarEventHandler from '../components/calendar/calendar-event-handler'
 import { CalEvent, Calendar } from '../utils/models'
-import { rootDoc, setDocChangeHook, unsetDocChangeHook } from "../utils/main"
+import { rootDoc, setDocChangeHook, unsetDocChangeHook, initEvent } from "../utils/main"
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
+
 
 export default function SharedCalendar() {
   const [events, setEvents] = useState<Calendar>({})
@@ -17,7 +20,7 @@ export default function SharedCalendar() {
   }, [])
 
   useEffect(() => {
-    loadDocument()
+    initEvent.then(() => loadDocument())
   }, [loadDocument])
 
   useEffect(() => {
@@ -80,11 +83,13 @@ export default function SharedCalendar() {
   }
 
   return (
-    <WeekView
-      events={events}
-      onNewEvent={addNewEvent}
-      onEventUpdate={updateEvent}
-      onEventDelete={deleteEvent}
-    />
+    <LocalizationProvider dateAdapter={AdapterMoment}>
+      <WeekView
+        events={events}
+        onNewEvent={addNewEvent}
+        onEventUpdate={updateEvent}
+        onEventDelete={deleteEvent}
+      />
+    </LocalizationProvider>
   )
 }
