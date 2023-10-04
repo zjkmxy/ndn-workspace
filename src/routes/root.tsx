@@ -10,6 +10,7 @@ export default function Root() {
   }, [])
 
 
+  // TODO: Use a better drawer
   return (
     <>
       <div id="sidebar">
@@ -21,6 +22,9 @@ export default function Root() {
             </li>
             <li>
               <Link to={`calendar`}>Calendar</Link>
+            </li>
+            <li>
+              <Link to={`latex`}>Latex</Link>
             </li>
             <li>
               <Link to={`config`}>Config</Link>

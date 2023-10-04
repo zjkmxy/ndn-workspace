@@ -29,6 +29,7 @@ export default function Docs() {
     navigate(`/docs/${id}`)
   }
 
+  // useCallback caches the result of the function, so it does not reload too frequently.
   const loadDocument = useCallback(() => {
     rootDoc.doc()
       .then(docs => {

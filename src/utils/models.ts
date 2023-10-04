@@ -8,7 +8,8 @@ export type DocumentsType = { [docId: string]: DocType }
 
 export type RootDocType = {
   documents: DocumentsType,
-  calendar: Calendar
+  calendar: Calendar,
+  latex: string
 }
 
 export type Calendar = { [time: string]: CalEvent[] }
@@ -57,4 +58,5 @@ export namespace CalEvent {
 export function initRootDoc(rootDoc: RootDocType) {
   rootDoc.documents = {}
   rootDoc.calendar = {}
+  rootDoc.latex = ''
 }
