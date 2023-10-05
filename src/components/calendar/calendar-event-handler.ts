@@ -6,10 +6,10 @@ import { CalEvent, Calendar } from '../../utils/models'
  * @param {arr} allEvent - Array of all the events
  * @param {Object} newEvent - Event object of the new event
 */
-export function addEvent(allEvents: Calendar, newEvent: CalEvent) {
+export function addEvent(allEvents: Partial<Calendar>, newEvent: CalEvent) {
   const time = moment(newEvent.start).hours()
   if (allEvents[time]) {
-    allEvents[time].push(newEvent)
+    allEvents[time]!.push(newEvent)
   } else {
     allEvents[time] = [newEvent]
   }
@@ -31,11 +31,12 @@ export function generateId(event: { title: string, start: number, end: number })
  * @param {string} eventId - Id of the event to be deleted
  * @param {arr} allEvents - Array of all the events
 */
-export function deleteEvent(eventId: string, allEvents: Calendar) {
+export function deleteEvent(eventId: string, allEvents: Partial<Calendar>) {
   Object.keys(allEvents).forEach(time => {
-    const index = allEvents[time].findIndex(event => event.id === eventId)
-    if (index >= 0) {
-      allEvents[time].splice(index, 1)
+    const index = allEvents[time]?.findIndex(event => event.id === eventId)
+    if (index && index >= 0) {
+      // TODO: This does not work
+      allEvents[time]!.splice(index, 1)
     }
   })
 }
@@ -47,11 +48,13 @@ export function deleteEvent(eventId: string, allEvents: Calendar) {
  * @param {arr} allEvents - Array of all the events
  * @returns {Object} allEvents - A new object reference for all events
 */
-export function updateEvent(eventId: string, updatedEvent: CalEvent.Update, allEvents: Calendar) {
+export function updateEvent(eventId: string, updatedEvent: CalEvent.Update, allEvents: Partial<Calendar>) {
+  // TODO: Switch time slot
+  // TODO: Box CalEvent
   Object.keys(allEvents).forEach(time => {
-    allEvents[time].forEach((event, index) => {
+    allEvents[time]?.forEach(event => {
       if (event.id === eventId) {
-        allEvents[time][index] = CalEvent.update(event, updatedEvent)
+        CalEvent.update(event, updatedEvent)
       }
     })
   })

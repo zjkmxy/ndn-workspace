@@ -21,5 +21,6 @@
 - PWA
 - Multiple ways to connect
 - Multiple context switching
+- Encryption
 
 Search code for other TODOs

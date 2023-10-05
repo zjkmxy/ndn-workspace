@@ -9,14 +9,10 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 
 
 export default function SharedCalendar() {
-  const [events, setEvents] = useState<Calendar>({})
+  const [events, setEvents] = useState<Partial<Calendar>>({})
 
   const loadDocument = useCallback(() => {
-    rootDoc.doc()
-      .then(docs => {
-        setEvents(docs?.calendar || {})
-      })
-      .catch((err) => console.log(err))
+    setEvents(rootDoc.calendar)
   }, [])
 
   useEffect(() => {
@@ -47,9 +43,7 @@ export default function SharedCalendar() {
       start: start,
       end: end,
     }
-    rootDoc.change(docs => {
-      CalendarEventHandler.addEvent(docs.calendar, newEvent)
-    })
+    CalendarEventHandler.addEvent(rootDoc.calendar, newEvent)
   }
 
   /**
@@ -63,13 +57,11 @@ export default function SharedCalendar() {
    * }
   */
   const updateEvent = (eventId: string, updatedEvent: CalEvent.Update) => {
-    rootDoc.change(docs => {
-      CalendarEventHandler.updateEvent(
-        eventId,
-        updatedEvent,
-        docs.calendar
-      )
-    })
+    CalendarEventHandler.updateEvent(
+      eventId,
+      updatedEvent,
+      rootDoc.calendar
+    )
   }
 
   /**
@@ -77,9 +69,7 @@ export default function SharedCalendar() {
    * @param {String} eventId - Id of the event
   */
   const deleteEvent = (eventId: string) => {
-    rootDoc.change(docs => {
-      CalendarEventHandler.deleteEvent(eventId, docs.calendar)
-    })
+    CalendarEventHandler.deleteEvent(eventId, rootDoc.calendar)
   }
 
   return (

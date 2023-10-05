@@ -9,7 +9,7 @@ import Root from './routes/root'
 import ErrorPage from './error-page'
 import './index.css'
 import Config from './routes/config';
-import Docs from './routes/docs'
+// import Docs from './routes/docs'
 import SharedCalendar from './routes/calendar';
 import Latex from './routes/latex';
 
@@ -24,15 +24,15 @@ const router = createBrowserRouter([
         element: <Config />
       },
       // TODO: Navibar's link to docs does not return to top level.
-      {
-        path: "docs",
-        element: <Docs />,
-      },
-      {
-        path: "docs/:docId",
-        element: <Docs />,
-        loader: async ({ params }: { params: Params }) => params.docId,
-      },
+      // {
+      //   path: "docs",
+      //   element: <Docs />,
+      // },
+      // {
+      //   path: "docs/:docId",
+      //   element: <Docs />,
+      //   loader: async ({ params }: { params: Params }) => params.docId,
+      // },
       {
         path: "calendar",
         element: <SharedCalendar />,

@@ -1,47 +1,24 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import CodeMirror from '@uiw/react-codemirror'
 import { StreamLanguage } from '@codemirror/language'
 import { stex } from '@codemirror/legacy-modes/mode/stex'
 import { Button } from '@mui/material'
-import { useCallback, useEffect, useState } from 'react'
-import { rootDoc, setDocChangeHook, unsetDocChangeHook, initEvent } from '../utils/main'
+import { useState } from 'react'
+import { rootDoc } from '../utils/main'
+// @ts-ignore
+import { yCollab } from 'y-codemirror.next'
+// There is an error in y-codemirror.next's package.json.
 
 export default function Latex() {
   const [pdfUrl, setPdfUrl] = useState('')
-  const [editorValue, setEditorValue] = useState('')
 
-  const loadDocument = useCallback(() => {
-    rootDoc.doc()
-      .then(docs => {
-        setEditorValue(docs?.latex || '')
-      })
-      .catch((err) => console.log(err))
-  }, [])
-
-  useEffect(() => {
-    initEvent.then(() => loadDocument())
-  }, [loadDocument])
-
-  useEffect(() => {
-    setDocChangeHook(docs => {
-      setEditorValue(docs.latex)
-    })
-    return () => unsetDocChangeHook()
-  }, [])
-
-  const updateDocument = useCallback((val: string) => {
-    if (val && rootDoc) {
-      rootDoc.change(docs => {
-        docs.latex = val
-      })
-    }
-    setEditorValue(val)
-  }, [])
+  // TODO: How to handle initEvent?
 
   // NOTE: compiling LaTeX requires local LaTeX server running at 6175
   const onClick = () => {
     (async () => {
       const formData = new FormData();
-      formData.append("file", new File([editorValue], 'input.tex', {
+      formData.append("file", new File([rootDoc.latex.toString()], 'input.tex', {
         type: 'application/octet-stream',
       }));
       const response = await fetch('http://localhost:6175/single-shot', {
@@ -62,10 +39,12 @@ export default function Latex() {
   return (
     <>
       <CodeMirror
-        value={editorValue}
         height="400px"
-        extensions={[StreamLanguage.define(stex)]}
-        onChange={updateDocument} />
+        value={rootDoc.latex.toString()}
+        extensions={[
+          StreamLanguage.define(stex),
+          yCollab(rootDoc.latex, null)
+        ]} />
       <p></p>
       <Button variant="contained" onClick={onClick}>
         Compile

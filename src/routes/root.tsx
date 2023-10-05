@@ -18,9 +18,6 @@ export default function Root() {
         <nav>
           <ul>
             <li>
-              <Link to={`docs`}>Docs</Link>
-            </li>
-            <li>
               <Link to={`calendar`}>Calendar</Link>
             </li>
             <li>

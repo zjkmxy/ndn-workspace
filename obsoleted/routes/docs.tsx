@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // Adapted from: https://blog.logrocket.com/build-google-docs-clone-react-automerge/
 import { useLoaderData, useNavigate } from "react-router-dom"
 import { rootDoc, setDocChangeHook, unsetDocChangeHook } from "../utils/main"
@@ -9,6 +10,9 @@ import ContentWrapper from "../components/docs/content-wrapper"
 import DocumentCard from "../components/docs/document-card"
 import AddButton from "../components/docs/add-button"
 import ReactQuill from "react-quill"
+// @ts-ignore
+import { QuillBinding } from 'y-quill'
+// There is an error in y-quill's package.json.
 import "react-quill/dist/quill.snow.css"
 
 export default function Docs() {

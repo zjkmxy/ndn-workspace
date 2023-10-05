@@ -4,15 +4,16 @@ import { Endpoint } from "@ndn/endpoint"
 import { CertStorage } from './cert-storage'
 import { Data, Interest, Name } from '@ndn/packet'
 import { PeerJsListener } from './peerjs-transport'
-import { NdnAdapter } from "./automerge-ndn-adaptor"
-import { DocHandle, AutomergeUrl, Repo } from '@automerge/automerge-repo'
 import { fromUtf8, toUtf8 } from '@ndn/util'
 import { RootDocType, initRootDoc } from './models'
+import { syncedStore, getYjsDoc } from '@syncedstore/core'
+import { NdnSvsAdaptor } from "./yjs-ndn-adaptor"
+import { v4 as uuidv4 } from "uuid"
 
 export const nodeId = '/node-' + Array.from(crypto.getRandomValues(new Uint8Array(4)))
   .map(v => v.toString(16).padStart(2, '0'))
   .join('')
-export const syncPrefix = '/example/testAutomerge'
+export const syncPrefix = '/example/testYjs'
 const opts: PeerJsListener.Options = {
   host: "localhost",
   port: 8000,
@@ -24,14 +25,14 @@ export let initialized = false
 export let certStorage: CertStorage
 export let listener: PeerJsListener
 export let endpoint: Endpoint
-export let automergeRepo: Repo
 // TODO: Decouple backend with frontend. Consider Redux?
 // TODO: Switch to Yjs
 // TODO: Separate CRDT document with data packets. Add data storage to store updates from other peers.
 // TODO: Setup persistent storage using IndexDB
-export let rootDocId: AutomergeUrl | null = null
-export let rootDoc: DocHandle<RootDocType>
+export let rootDocId: string = ''
+export let rootDoc: ReturnType<typeof syncedStore<RootDocType>>
 export let docChangeHook: ((docs: RootDocType) => void) | null = null
+export let yjsAdaptor: NdnSvsAdaptor
 
 export const initEvent = (async () => {
   if (initialized) {
@@ -57,38 +58,31 @@ export const initEvent = (async () => {
   if (listener.faces.length > 0) {
     try {
       const data = await endpoint.consume(syncPrefix + '/docId', {})
-      rootDocId = fromUtf8(data.content) as AutomergeUrl
+      rootDocId = fromUtf8(data.content)
     } catch (err) {
       console.error(`Unable to fetch document ID: ${err}. New document will be created.`)
-      rootDocId = null
+      rootDocId = ''
     }
   } else {
-    rootDocId = null
+    rootDocId = ''
   }
 
-  // Scene using CRDT and Sync
-  const adapter = new NdnAdapter(endpoint, new Name(syncPrefix), certStorage.signer!, certStorage)
-  automergeRepo = new Repo({
-    network: [adapter],
-  })
+  // Root doc using CRDT and Sync
+  rootDoc = initRootDoc()
+  yjsAdaptor = new NdnSvsAdaptor(
+    endpoint,
+    new Name(syncPrefix),
+    certStorage.signer!,
+    certStorage,
+    getYjsDoc(rootDoc))
+
   // Delay for the network to be ready
-  await new Promise(resolve => setTimeout(resolve, 10))
   if (rootDocId) {
-    rootDoc = automergeRepo.find(rootDocId)
     console.log(`Loaded document: ${rootDocId}`)
   } else {
-    rootDoc = automergeRepo.create()
-    rootDoc.change(doc => {
-      initRootDoc(doc)
-    })
-    rootDocId = rootDoc.url
+    rootDocId = uuidv4()
     console.log(`Created document: ${rootDocId}`)
   }
-
-  // Setup hook for changes (either local or remote)
-  rootDoc.on('change', (payload) => {
-    if (docChangeHook) { docChangeHook(payload.doc) }
-  })
 
   // Help others know docId
   endpoint.produce(syncPrefix + '/docId', docIdServer, { describe: 'dataHandler' })

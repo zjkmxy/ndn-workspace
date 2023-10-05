@@ -1,4 +1,5 @@
 import moment from 'moment'
+import { syncedStore } from "@syncedstore/core";
 
 export type DocType = {
   docId: string,
@@ -9,7 +10,7 @@ export type DocumentsType = { [docId: string]: DocType }
 export type RootDocType = {
   documents: DocumentsType,
   calendar: Calendar,
-  latex: string
+  latex: 'text'
 }
 
 export type Calendar = { [time: string]: CalEvent[] }
@@ -29,12 +30,15 @@ export namespace CalEvent {
     end: number | undefined,
   }
 
-  export function update(origin: CalEvent, update: Update): CalEvent {
-    return {
-      id: origin.id,
-      title: update.title || origin.title,
-      start: update.start || origin.start,
-      end: update.end || origin.end,
+  export function update(origin: CalEvent, update: Update) {
+    if (update.title) {
+      origin.title = update.title
+    }
+    if (update.start) {
+      origin.start = update.start
+    }
+    if (update.end) {
+      origin.end = update.end
     }
   }
 
@@ -43,7 +47,7 @@ export namespace CalEvent {
   }
 
   export function endMoment(event: CalEvent) {
-    return moment(event.start)
+    return moment(event.end)
   }
 
   export function startWeek(event: CalEvent) {
@@ -55,8 +59,10 @@ export namespace CalEvent {
   }
 }
 
-export function initRootDoc(rootDoc: RootDocType) {
-  rootDoc.documents = {}
-  rootDoc.calendar = {}
-  rootDoc.latex = ''
+export function initRootDoc() {
+  return syncedStore({
+    documents: {},
+    calendar: {},
+    latex: 'text',
+  } as RootDocType)
 }

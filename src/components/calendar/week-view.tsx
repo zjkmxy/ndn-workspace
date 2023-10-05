@@ -10,7 +10,7 @@ import { CalEvent, Calendar } from '../../utils/models'
 import styles from './styles.module.css'
 
 export default function WeekView(props: {
-  events: Calendar,
+  events: Partial<Calendar>,
   onNewEvent: (event: { title: string, start: moment.Moment, end: moment.Moment }) => void,
   onEventDelete: (id: string) => void,
   onEventUpdate: (id: string, updatedEvent: CalEvent.Update) => void,
@@ -122,7 +122,7 @@ export default function WeekView(props: {
           openAddEventModal={openAddEventModal}
         >
           {props.events[time] &&
-            props.events[time].map(
+            props.events[time]?.map(
               event =>
                 CalEvent.startWeek(event) <= moment(startDate).week() &&
                 CalEvent.endWeek(event) >= moment(startDate).week() &&
