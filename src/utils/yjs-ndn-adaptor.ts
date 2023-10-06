@@ -47,12 +47,14 @@ export class NdnSvsAdaptor {
   private docUpdateHandler(update: Uint8Array, origin: undefined) {
     if (origin !== this) {
       this.produce(update)  // No need to await
-      // console.debug(`Produced update`)
     }
   }
 
   private async produce(content: Uint8Array) {
+    // TODO: Separate sync agent with adaptor
+    // TODO: Sync agent should handle large changes
     const seqNum = this.syncNode.seqNum + 1
+    this.syncNode.seqNum = seqNum  // This line must be called immediately to prevent race condition
     const name = this.baseName.append(SequenceNum.create(seqNum))
     const data = new Data(
       name,
@@ -61,7 +63,6 @@ export class NdnSvsAdaptor {
     )
     await this.signer.sign(data)
     this.pktStorage[name.toString()] = data
-    this.syncNode.seqNum = seqNum
   }
 
   private async handleSyncUpdate(update: SyncUpdate<Name>) {

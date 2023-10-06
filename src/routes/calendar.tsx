@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import WeekView from '../components/calendar/week-view'
 import * as CalendarEventHandler from '../components/calendar/calendar-event-handler'
 import { CalEvent, Calendar } from '../utils/models'
-import { rootDoc, setDocChangeHook, unsetDocChangeHook, initEvent } from "../utils/main"
+import { rootDoc, initEvent } from "../utils/main"
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 
@@ -18,13 +18,6 @@ export default function SharedCalendar() {
   useEffect(() => {
     initEvent.then(() => loadDocument())
   }, [loadDocument])
-
-  useEffect(() => {
-    setDocChangeHook(docs => {
-      setEvents(docs.calendar)
-    })
-    return () => unsetDocChangeHook()
-  }, [])
 
   /**
    * Add new event in the event list in the state

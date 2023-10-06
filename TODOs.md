@@ -3,7 +3,10 @@
   - It stops working after sync a large amount of data.
 - Navibar
   - Use a better drawer as navibar.
+- Project
+  - Handle special file names (spaces, slashes, etc.)
 - Docs
+  - Make it work under Yjs
   - Navibar's link to docs does not return to top level.
 - Calendar
   - Handle 12:00 AM correctly

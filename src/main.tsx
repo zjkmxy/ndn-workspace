@@ -11,7 +11,7 @@ import './index.css'
 import Config from './routes/config';
 // import Docs from './routes/docs'
 import SharedCalendar from './routes/calendar';
-import Latex from './routes/latex';
+import LatexProject from './routes/latex-project';
 
 const router = createBrowserRouter([
   {
@@ -38,8 +38,9 @@ const router = createBrowserRouter([
         element: <SharedCalendar />,
       },
       {
-        path: "latex",
-        element: <Latex />,
+        path: "latex/*",
+        element: <LatexProject rootUri='/latex' />,
+        loader: async ({ params }: { params: Params }) => params['*'],
       },
     ]
   }

@@ -9,6 +9,7 @@ import { RootDocType, initRootDoc } from './models'
 import { syncedStore, getYjsDoc } from '@syncedstore/core'
 import { NdnSvsAdaptor } from "./yjs-ndn-adaptor"
 import { v4 as uuidv4 } from "uuid"
+import * as Y from 'yjs'
 
 export const nodeId = '/node-' + Array.from(crypto.getRandomValues(new Uint8Array(4)))
   .map(v => v.toString(16).padStart(2, '0'))
@@ -31,7 +32,6 @@ export let endpoint: Endpoint
 // TODO: Setup persistent storage using IndexDB
 export let rootDocId: string = ''
 export let rootDoc: ReturnType<typeof syncedStore<RootDocType>>
-export let docChangeHook: ((docs: RootDocType) => void) | null = null
 export let yjsAdaptor: NdnSvsAdaptor
 
 export const initEvent = (async () => {
@@ -82,6 +82,16 @@ export const initEvent = (async () => {
   } else {
     rootDocId = uuidv4()
     console.log(`Created document: ${rootDocId}`)
+    rootDoc.latex.root = {
+      kind: 'folder',
+      name: 'ROOT',
+      items: []
+    }
+    rootDoc.latex.root.items.push({
+      kind: 'doc',
+      name: 'main.tex',
+      text: new Y.Text(),
+    })
   }
 
   // Help others know docId
@@ -103,14 +113,4 @@ async function docIdServer(interest: Interest) {
 
 export function shutdown() {
   listener.closeAll()
-}
-
-// TODO: Optimize this: currently changing `documents` will trigger rerendering of `calendar`
-// Also, they should be separated into different Yjs/Automerge docs
-export function setDocChangeHook(hook: (docs: RootDocType) => void) {
-  docChangeHook = hook
-}
-
-export function unsetDocChangeHook() {
-  docChangeHook = null
 }
