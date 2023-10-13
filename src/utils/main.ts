@@ -101,7 +101,7 @@ export const initEvent = (async () => {
 
 async function docIdServer(interest: Interest) {
   const name = interest.name.toString()
-  const content = toUtf8(rootDocId || '')
+  const content = toUtf8(rootDocId ?? '')
   console.log(`Responded with docId = ${content}`)
   const data = new Data(
     name,

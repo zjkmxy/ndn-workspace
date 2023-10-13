@@ -15,7 +15,7 @@ export default function LatexProject({ rootUri }: {
   rootUri: string
 }) {
   const navigate = useNavigate()
-  const path = useLoaderData() as string || ''
+  const path = useLoaderData() as string ?? ''
   const pathNames = path ? path.split('/') : []
   const pathUri = path ? `${rootUri}/${path}` : rootUri
   const [item, setItem] = useState<ProjFileDesc>()

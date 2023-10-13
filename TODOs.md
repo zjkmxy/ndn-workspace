@@ -16,6 +16,9 @@
 - Decouple backend with frontend. Consider Redux?
 - Use IndexDB Storage
 - Add security. How to bootstrap?
+  - So our decision is:
+    - Use the testbed trust anchor
+    - Ask the user to upload the safebag with testbed certificate for the first use
 - Switch to Yjs
 - Latex: multifile support
 

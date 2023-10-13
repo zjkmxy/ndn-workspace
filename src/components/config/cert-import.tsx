@@ -9,7 +9,7 @@ export default function CertImport({ files, setFiles }:
 
   useEffect(() => {
     if (inputRef.current) {
-      inputRef.current.files = files || null
+      inputRef.current.files = files ?? null
     }
   }, [files])
 
@@ -18,7 +18,7 @@ export default function CertImport({ files, setFiles }:
       <label>
         QRCode to import:
         <input name='certQrInput' type="file" accept="image/*"
-          onChange={(e) => setFiles(e.target.files || undefined)}
+          onChange={(e) => setFiles(e.target.files ?? undefined)}
           ref={inputRef} />
       </label>
     </>

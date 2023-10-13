@@ -18,7 +18,7 @@ export default function Config() {
         console.error('Wrong execution order')
       } else {
         await certStorage.readyEvent
-        setSignerValue(certStorage.signer?.name.toString() || "")
+        setSignerValue(certStorage.signer?.name.toString() ?? "")
         const selfCert = certStorage.exportSelfCert()
         setQrValue(bytesToBase64(selfCert))
       }
@@ -27,7 +27,7 @@ export default function Config() {
 
   useEffect(() => {
     (async () => {
-      const files = certFiles || []
+      const files = certFiles ?? []
       for (const file of files) {
         const wire = await scanQrCode(file)
         if (wire) {
